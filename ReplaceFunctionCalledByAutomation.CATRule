@@ -1,0 +1,33 @@
+FormalReal.1=FormalReal.2
+Let QueryOldInst(PLMQuery)
+Let QueryNewRef(PLMQuery)
+Let results(List)
+Let currentResult(PLMQueryResult)
+Let OldInst (VPMInstance)
+Let NewRef (VPMReference)
+Let oNewInst (VPMInstance)
+Let sInputList(List)
+
+//split input String
+set sInputList = SplitString(String.1, "|")
+
+//Query for old instance to be replaced (and load)
+QueryOldInst = CreatePLMQuery("VPMInstance")
+QueryOldInst->AddCriterion("PLM_ExternalID", sInputList.GetItem(1))
+results = QueryOldInst->RunQuery()
+set currentResult = results.GetItem(1)
+set OldInst = currentResult->LoadResult()
+//Notify("Current Loaded VPMReference: ", OldInst.GetAttributeString("PLM_ExternalID"))
+
+//Query for new reference as replacement (and load)
+QueryNewRef = CreatePLMQuery("VPMReference")
+QueryNewRef->AddCriterion("V_Name", sInputList.GetItem(2))
+results = QueryNewRef->RunQuery()
+set currentResult = results.GetItem(1)
+set NewRef = currentResult->LoadResult()
+
+//run function for replace an instance
+set oNewInst = ReplaceInstance (OldInst, NewRef)
+
+//notify
+Notify("Replacement set!")
